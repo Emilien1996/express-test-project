@@ -46,10 +46,16 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
       message: "Forbidden",
     });
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-    if (err || foundUser.username !== (decoded as typeof foundUser).username) return res.sendStatus(403);
+    if (err || foundUser.username !== (decoded as typeof foundUser).username)
+      return res.sendStatus(403);
+    const roles = Object.values(foundUser.roles);
+
     const accessToken = jwt.sign(
       {
-        username: (decoded as typeof foundUser).username,
+        UserInfo: {
+          username: (decoded as typeof foundUser).username,
+          roles,
+        },
       },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "30s" }

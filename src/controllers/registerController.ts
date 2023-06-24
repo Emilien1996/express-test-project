@@ -10,6 +10,7 @@ const UserDb = {
     username: string;
     password: string;
     refresh_token: string;
+    roles: any;
   }) => {
     UserDb.users.push(data);
   },
@@ -34,7 +35,10 @@ export const handleNewUser = async (
     const newUser = {
       username: user,
       password: hashedPwd,
-      refresh_token : '11'
+      roles: {
+        USER: 1984,
+      },
+      refresh_token: "11",
     };
     UserDb.setUser(newUser);
     await promises.writeFile(
