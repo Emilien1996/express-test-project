@@ -1,5 +1,15 @@
 {
-    "parser": "@typescript-eslint/parser",
-    "extends": ["plugin:@typescript-eslint/recommended"],
-    "rules": {}
+  "parser": "@typescript-eslint/parser",
+  "extends": ["plugin:@typescript-eslint/recommended"],
+  "rules": {
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "extendDefaults": true,
+        "types": {
+          "{}": false
+        }
+      }
+    ]
   }
+}

@@ -11,5 +11,6 @@ export const credentials = (
   if (!origin) return res.sendStatus(403);
   if (allowedOrigins.includes(origin)) {
     res.header("Access-Control-Allow-Origin", "*");
+    next()
   }
 };
