@@ -1,7 +1,11 @@
 [
   {
-    "username": "",
-    "password": "",
-    "refresh_token": ""
+    "username": "walt1",
+    "roles" : {
+      "USER" : 2001,
+      "EDITOR" : 1984
+    },
+    "password": "jdjjdjdsaddm",
+    "refresh_token": "adjksdjkfjsdlkfjslkdf"
   }
 ]

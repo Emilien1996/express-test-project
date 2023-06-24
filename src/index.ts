@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import bodyParser from "body-parser";
 import { productRoutes } from "./routes/products-router";
 import cors, { CorsOptions } from "cors";
@@ -8,7 +8,7 @@ import { verifyJWT } from "./middleware/verifyJWT";
 import cookieParser from "cookie-parser";
 import { refreshTokenRoute } from "./routes/refresh-router";
 import { logoutRoute } from "./routes/logout-router";
-import { allowedOrigins, credentials } from "./middleware/credentials";
+import { allowedOrigins } from "./middleware/credentials";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -24,7 +24,7 @@ const corsOptions: CorsOptions = {
   optionsSuccessStatus: 200,
 };
 
-app.use(credentials);
+// app.use(credentials);
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
