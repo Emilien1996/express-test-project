@@ -1,17 +1,23 @@
-import express from "express";
-import bodyParser from "body-parser";
-import { productRoutes } from "./routes/products-router";
-import cors, { CorsOptions } from "cors";
-import { userRoutes } from "./routes/user-router";
-import { authRoutes } from "./routes/user-login";
-import { verifyJWT } from "./middleware/verifyJWT";
-import cookieParser from "cookie-parser";
-import { refreshTokenRoute } from "./routes/refresh-router";
-import { logoutRoute } from "./routes/logout-router";
-import { allowedOrigins } from "./middleware/credentials";
+import express from 'express';
+import bodyParser from 'body-parser';
+import { productRoutes } from './routes/products-router';
+import cors, { CorsOptions } from 'cors';
+import { userRoutes } from './routes/user-router';
+import { authRoutes } from './routes/user-login';
+import { verifyJWT } from './middleware/verifyJWT';
+import cookieParser from 'cookie-parser';
+import { refreshTokenRoute } from './routes/refresh-router';
+import { logoutRoute } from './routes/logout-router';
+import { allowedOrigins } from './middleware/credentials';
+import dotenv from 'dotenv';
+import { connectDb } from './config/connectDB';
+import mongoose from 'mongoose';
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+connectDb();
 
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
@@ -30,14 +36,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use("/register", userRoutes);
-app.use("/auth", authRoutes);
-app.use("/refresh", refreshTokenRoute);
-app.use("/logout", logoutRoute);
+app.use('/register', userRoutes);
+app.use('/auth', authRoutes);
+app.use('/refresh', refreshTokenRoute);
+app.use('/logout', logoutRoute);
 
 app.use(verifyJWT);
-app.use("/products", productRoutes);
+app.use('/products', productRoutes);
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+mongoose.connection.once('open', () => {
+  console.log('connected with mongoDB');
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+  });
 });

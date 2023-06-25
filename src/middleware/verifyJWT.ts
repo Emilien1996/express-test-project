@@ -1,11 +1,6 @@
-import dotenv from 'dotenv';
-import {  Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { RequestWithRoles } from '../types/types';
-
-dotenv.config();
-
-
 
 export const verifyJWT = async (req: RequestWithRoles, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization || (req.headers.Authorization as string);

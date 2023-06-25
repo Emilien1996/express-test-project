@@ -1,10 +1,7 @@
 import { Request, Response } from 'express';
 import users from '../model/users.json';
 import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-
-dotenv.config();
 
 const UserDb = {
   users,
