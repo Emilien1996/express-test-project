@@ -1,8 +1,5 @@
 import { Request, Response } from "express";
 import users from "../model/users.json";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const UserDb = {
   users,
