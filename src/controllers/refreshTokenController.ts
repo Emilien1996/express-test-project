@@ -1,50 +1,22 @@
-import { Request, Response } from "express";
-import users from "../model/users.json";
-import jwt from "jsonwebtoken";
-
-const UserDb = {
-  users,
-  setUser: (data: {
-    username: string;
-    password: string;
-    refreshToken: string;
-  }) => {
-    const founduser = UserDb.users.findIndex(
-      (person) => person.username === data.username
-    );
-    const modified = founduser
-      ? UserDb.users.map((person, idx) => {
-          if (founduser === idx) {
-            return {
-              ...person,
-              ...data,
-            };
-          } else {
-            return person;
-          }
-        })
-      : UserDb.users;
-    return modified;
-  },
-};
+import { Request, Response } from 'express';
+import UserDb from '../model/User';
+import jwt from 'jsonwebtoken';
 
 export const handleRefreshToken = async (req: Request, res: Response) => {
   const cookies = req.cookies as { jwt?: string };
 
   if (!cookies?.jwt) return res.sendStatus(401);
-  console.log(cookies.jwt, "finded jwt");
+  console.log(cookies.jwt, 'finded jwt');
   const refreshToken = cookies.jwt;
 
-  const foundUser = UserDb.users.find(
-    (person) => person.refresh_token === refreshToken
-  );
+  const foundUser =  await UserDb.findOne({ refreshToken }).exec();
   if (!foundUser)
     return res.status(403).send({
-      message: "Forbidden",
+      message: 'Forbidden',
     });
+    // evaluate jwt
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-    if (err || foundUser.username !== (decoded as typeof foundUser).username)
-      return res.sendStatus(403);
+    if (err || foundUser.username !== (decoded as typeof foundUser).username) return res.sendStatus(403);
     const roles = Object.values(foundUser.roles);
 
     const accessToken = jwt.sign(
@@ -55,7 +27,7 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "30s" }
+      { expiresIn: '10m' },
     );
     res.send({ accessToken });
   });
