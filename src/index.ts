@@ -1,6 +1,5 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { productRoutes } from './routes/products-router';
 import cors, { CorsOptions } from 'cors';
 import { userRoutes } from './routes/user-router';
 import { authRoutes } from './routes/user-login';
@@ -42,7 +41,7 @@ app.use('/refresh', refreshTokenRoute);
 app.use('/logout', logoutRoute);
 
 app.use(verifyJWT);
-app.use('/products', productRoutes);
+
 
 mongoose.connection.once('open', () => {
   console.log('connected with mongoDB');

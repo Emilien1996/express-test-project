@@ -1,47 +1,21 @@
-import { Request, Response } from "express";
-import users from "../model/users.json";
-
-const UserDb = {
-  users,
-  setUser: (data: {
-    username: string;
-    password: string;
-    refreshToken: string;
-  }) => {
-    const founduser = UserDb.users.findIndex(
-      (person) => person.username === data.username
-    );
-    const modified = founduser
-      ? UserDb.users.map((person, idx) => {
-          if (founduser === idx) {
-            return {
-              ...person,
-              ...data,
-            };
-          } else {
-            return person;
-          }
-        })
-      : UserDb.users;
-    return modified;
-  },
-};
+import { Request, Response } from 'express';
+import UserDB from '../model/User';
 
 export const handleLogout = async (req: Request, res: Response) => {
   const cookies = req.cookies as { jwt?: string };
 
   if (!cookies?.jwt) return res.sendStatus(204);
-  console.log(cookies.jwt, "finded jwt");
   const refreshToken = cookies.jwt;
+  const foundUser = await UserDB.findOne({ refreshToken }).exec();
 
-  const foundUser = UserDb.users.find(
-    (person) => person.refresh_token === refreshToken
-  );
+  // is refresh token in database
   if (!foundUser) {
-    res.clearCookie("jwt", { httpOnly: true });
+    res.clearCookie('jwt', { httpOnly: true });
     return res.sendStatus(204);
   }
-
-  res.clearCookie("jwt", { httpOnly: true, sameSite: "none", secure: true });
+  foundUser.refreshToken = '';
+  const result = await foundUser.save();
+  console.log({ result });
+  res.clearCookie('jwt', { httpOnly: true, sameSite: 'none', secure: true });
   res.sendStatus(204);
 };

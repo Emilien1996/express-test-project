@@ -1,38 +1,20 @@
 import { Request, Response } from 'express';
-import users from '../model/users.json';
+import UserDB from '../model/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const UserDb = {
-  users,
-  setUser: (data: { username: string; password: string; refreshToken: string }) => {
-    const founduser = UserDb.users.findIndex((person) => person.username === data.username);
-    const modified = founduser
-      ? UserDb.users.map((person, idx) => {
-          if (founduser === idx) {
-            return {
-              ...person,
-              ...data,
-            };
-          } else {
-            return person;
-          }
-        })
-      : UserDb.users;
-    return modified;
-  },
-};
-
 export const handleLogin = async (req: Request<{}, {}, { user: string; password: string }>, res: Response) => {
   const { user, password } = req.body;
-  const foundUser = UserDb.users.find((person) => person.username === user);
+  const foundUser = await UserDB.findOne({ username: user });
   if (!foundUser)
     return res.status(401).send({
       message: 'UnAuthorized',
     });
+  // evaluate password
   const match = await bcrypt.compare(password, foundUser.password);
   if (match) {
     const roles = Object.values(foundUser.roles);
+    // create JWTs
     const accessToken = jwt.sign(
       {
         UserInfo: {
@@ -54,12 +36,11 @@ export const handleLogin = async (req: Request<{}, {}, { user: string; password:
         expiresIn: '1d',
       },
     );
-    const currentUser = {
-      ...foundUser,
-      refreshToken,
-    };
-    const DB = UserDb.setUser(currentUser);
-    console.log({ DB });
+    console.log({ refreshToken });
+    // saving refresh token
+    foundUser.refreshToken = refreshToken;
+    const result = await foundUser.save();
+    console.log({ result });
     res.cookie('jwt', refreshToken, {
       httpOnly: true,
       sameSite: 'none',
