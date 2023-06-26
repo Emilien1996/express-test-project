@@ -11,6 +11,7 @@ import { allowedOrigins } from './middleware/credentials';
 import dotenv from 'dotenv';
 import { connectDb } from './config/connectDB';
 import mongoose from 'mongoose';
+import { employeeRoute } from './routes/employee-router';
 dotenv.config();
 
 const app = express();
@@ -41,7 +42,7 @@ app.use('/refresh', refreshTokenRoute);
 app.use('/logout', logoutRoute);
 
 app.use(verifyJWT);
-
+app.use('/employees', employeeRoute);
 
 mongoose.connection.once('open', () => {
   console.log('connected with mongoDB');
