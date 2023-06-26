@@ -4,11 +4,11 @@ import { IEmployees } from '../types/employeeType';
 const Schema = mongoose.Schema;
 
 const employeeSchema = new Schema<IEmployees>({
-  firstName: {
+  firstname: {
     type: String,
     required: true,
   },
-  lastName: {
+  lastname: {
     type: String,
     required: true,
   },
